@@ -20,8 +20,10 @@ const Mail: NextPage = () => {
               <th className="grow pr-6 pl-2 py-2 text-left">Collection</th>
               <th className="px-2 py-2">Avg Sale</th>
               <th className="px-2 py-2">Avg Sale Change</th>
-              <th className="px-2 py-2">Volume</th>
-              <th className="px-2 py-2">Total Sales</th>
+              <th className="px-2 py-2">Top Sale</th>
+              <th className="px-2 py-2">Low Sale</th>
+              <th className="px-2 py-2">Vol</th>
+              <th className="px-2 py-2">№ Sales</th>
               <th className="px-2 py-2">Owners / Supply</th>
             </tr>
           </thead>
@@ -32,6 +34,8 @@ const Mail: NextPage = () => {
               </td>
               <th className="py-2 font-medium">50 Ξ</th>
               <th className="py-2 font-medium text-green">12%</th>
+              <th className="py-2 font-medium">98 Ξ</th>
+              <th className="py-2 font-medium">49 Ξ</th>
               <th className="py-2 font-medium">765</th>
               <th className="py-2 font-medium">23</th>
               <th className="py-2 font-medium">80%</th>
@@ -40,6 +44,8 @@ const Mail: NextPage = () => {
               <td className="pr-2 py-2 pl-2 text-left font-medium">mfers</td>
               <th className="py-2 font-medium">2.3 Ξ</th>
               <th className="py-2 font-medium text-red">-32%</th>
+              <th className="py-2 font-medium">3.45 Ξ</th>
+              <th className="py-2 font-medium">2.3 Ξ</th>
               <th className="py-2 font-medium">765</th>
               <th className="py-2 font-medium">234</th>
               <th className="py-2 font-medium">64%</th>

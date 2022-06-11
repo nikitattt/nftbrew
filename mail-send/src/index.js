@@ -23,6 +23,9 @@ async function index() {
       collection: 'CryptoPunks',
       avgSale: '50 Ξ',
       avgSaleChange: '12%',
+      avgSaleChangePositive: true,
+      highestSale: '86 Ξ',
+      lowestSale: '49 Ξ',
       volume: '765 Ξ',
       totalSales: '23',
       ownersSupply: '80%'
