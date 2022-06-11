@@ -1,8 +1,22 @@
-require('dotenv').config()
+import 'dotenv/config'
 
-const nodemailer = require('nodemailer')
+import fetch from 'cross-fetch'
+import nodemailer from 'nodemailer'
+import dayjs from 'dayjs'
+
+import apolloPkg from '@apollo/client'
+const { ApolloClient, InMemoryCache, HttpLink, gql } = apolloPkg
 
 async function index() {
+  let trackedCollectionsData = {}
+
+  const userEmail = process.env.TEST_EMAIL
+
+  const client = new ApolloClient({
+    link: new HttpLink({ uri: 'https://api.zora.co/graphql', fetch }),
+    cache: new InMemoryCache()
+  })
+
   const transporter = await nodemailer.createTransport({
     host: process.env.EMAIL_HOST,
     port: process.env.EMAIL_PORT,
@@ -16,7 +30,67 @@ async function index() {
     }
   })
 
-  const userEmail = process.env.TEST_EMAIL
+  const trackedCollectionsAddresses = [
+    '0x49cf6f5d44e70224e2e23fdcdd2c053f30ada28b',
+    '0x79fcdef22feed20eddacbb2587640e45491b757f',
+    '0x1a92f7381b9f03921564a437210bb9396471050c',
+    '0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d',
+    '0x60e4d786628fea6478f785a6d7e704777c86a7c6',
+    '0x23581767a106ae21c074b2276d25e5c3e136a68b',
+    '0xed5af388653567af2f388e6224dc7c4b3241c544'
+  ]
+
+  await trackedCollectionsAddresses.forEach(async (address) => {
+    const firstBatchQuery = gql`
+      query FirstBatch($address: String!, $filter: TimeFilter) {
+        aggregateStat {
+          nftCount(where: { collectionAddresses: [$address] })
+          ownerCount(where: { collectionAddresses: [$address] })
+          salesVolume(
+            where: { collectionAddresses: [$address] }
+            timeFilter: $filter
+          ) {
+            chainTokenPrice
+            totalCount
+          }
+        }
+      }
+    `
+
+    const firstBatchVariables = {
+      address: address,
+      filter: {
+        startDate: '2022-06-02',
+        endDate: '2033-06-03'
+      }
+    }
+
+    const secondBatchQuery = gql`
+      query GetRates {
+        rates(currency: "USD") {
+          currency
+        }
+      }
+    `
+
+    const secondBatchVariables = {
+      address: address,
+      filter: {
+        startDate: '2022-06-02',
+        endDate: '2033-06-03'
+      }
+    }
+
+    await client
+      .query({
+        query: firstBatchQuery,
+        variables: firstBatchVariables
+      })
+      .then((result) => {
+        console.log(result)
+        // console.log(result.data.aggregateStat.salesVolume)
+      })
+  })
 
   const testData = [
     {
@@ -65,14 +139,14 @@ async function index() {
   ]
   const html = getHTML(testData)
 
-  const info = await transporter.sendMail({
-    from: `"NFT Brew Barista" <${process.env.EMAIL_USER}>`,
-    to: userEmail,
-    subject: 'Your Morning NFT Brew',
-    html: html
-  })
+  // const info = await transporter.sendMail({
+  //   from: `"NFT Brew Barista" <${process.env.EMAIL_USER}>`,
+  //   to: userEmail,
+  //   subject: 'Your Morning NFT Brew',
+  //   html: html
+  // })
 
-  console.log('Message sent: %s', info.messageId)
+  // console.log('Message sent: %s', info.messageId)
 }
 
 index().catch(console.error)
