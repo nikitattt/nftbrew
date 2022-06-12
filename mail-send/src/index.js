@@ -41,50 +41,78 @@ async function index() {
   ]
 
   await trackedCollectionsAddresses.forEach(async (address) => {
-    const firstBatchQuery = gql`
-      query FirstBatch($address: String!, $filter: TimeFilter) {
+    const query = gql`
+      query CollectionData($address: [String!]) {
         aggregateStat {
-          nftCount(where: { collectionAddresses: [$address] })
-          ownerCount(where: { collectionAddresses: [$address] })
-          salesVolume(
-            where: { collectionAddresses: [$address] }
-            timeFilter: $filter
+          nftCount(where: { collectionAddresses: $address })
+          ownerCount(where: { collectionAddresses: $address })
+          daySales: salesVolume(
+            where: { collectionAddresses: $address }
+            timeFilter: { lookbackHours: 24 }
+          ) {
+            chainTokenPrice
+            totalCount
+          }
+          twoDaySales: salesVolume(
+            where: { collectionAddresses: $address }
+            timeFilter: { lookbackHours: 48 }
           ) {
             chainTokenPrice
             totalCount
           }
         }
-      }
-    `
-
-    const firstBatchVariables = {
-      address: address,
-      filter: {
-        startDate: '2022-06-02',
-        endDate: '2033-06-03'
-      }
-    }
-
-    const secondBatchQuery = gql`
-      query GetRates {
-        rates(currency: "USD") {
-          currency
+        topSale: sales(
+          where: { collectionAddresses: $address }
+          filter: { timeFilter: { lookbackHours: 24 } }
+          sort: { sortKey: CHAIN_TOKEN_PRICE, sortDirection: DESC }
+          pagination: { limit: 1 }
+        ) {
+          nodes {
+            sale {
+              price {
+                chainTokenPrice {
+                  decimal
+                  currency {
+                    name
+                  }
+                }
+              }
+            }
+            token {
+              collectionName
+            }
+          }
+        }
+        lowSale: sales(
+          where: { collectionAddresses: $address }
+          filter: { timeFilter: { lookbackHours: 24 } }
+          sort: { sortKey: CHAIN_TOKEN_PRICE, sortDirection: ASC }
+          pagination: { limit: 2 }
+        ) {
+          nodes {
+            sale {
+              price {
+                chainTokenPrice {
+                  decimal
+                  currency {
+                    name
+                  }
+                }
+              }
+            }
+          }
         }
       }
     `
 
-    const secondBatchVariables = {
-      address: address,
-      filter: {
-        startDate: '2022-06-02',
-        endDate: '2033-06-03'
-      }
+    const variables = {
+      address: address
     }
 
     await client
       .query({
-        query: firstBatchQuery,
-        variables: firstBatchVariables
+        query: query,
+        variables: variables
       })
       .then((result) => {
         console.log(result)
