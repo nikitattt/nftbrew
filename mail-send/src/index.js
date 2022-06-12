@@ -2,19 +2,23 @@ import 'dotenv/config'
 
 import fetch from 'cross-fetch'
 import nodemailer from 'nodemailer'
-import dayjs from 'dayjs'
 
 import apolloPkg from '@apollo/client'
 const { ApolloClient, InMemoryCache, HttpLink, gql } = apolloPkg
 
-async function index() {
-  let trackedCollectionsData = {}
+function roundIt(number) {
+  return Math.round((number + Number.EPSILON) * 100) / 100
+}
 
+async function index() {
   const userEmail = process.env.TEST_EMAIL
 
   const client = new ApolloClient({
     link: new HttpLink({ uri: 'https://api.zora.co/graphql', fetch }),
-    cache: new InMemoryCache()
+    cache: new InMemoryCache(),
+    headers: {
+      'X-API-KEY': process.env.ZORA_API_KEY
+    }
   })
 
   const transporter = await nodemailer.createTransport({
@@ -40,7 +44,29 @@ async function index() {
     '0xed5af388653567af2f388e6224dc7c4b3241c544'
   ]
 
-  await trackedCollectionsAddresses.forEach(async (address) => {
+  const trackedCollectionsData = await getCollectionsData(
+    client,
+    trackedCollectionsAddresses
+  )
+
+  const html = getHTML(trackedCollectionsData)
+
+  // const info = await transporter.sendMail({
+  //   from: `"NFT Brew Barista" <${process.env.EMAIL_USER}>`,
+  //   to: userEmail,
+  //   subject: 'Your Morning NFT Brew',
+  //   html: html
+  // })
+
+  // console.log('Message sent: %s', info.messageId)
+}
+
+index().catch(console.error)
+
+async function getCollectionsData(client, addresses) {
+  let data = []
+
+  for (const address of addresses) {
     const query = gql`
       query CollectionData($address: [String!]) {
         aggregateStat {
@@ -109,75 +135,54 @@ async function index() {
       address: address
     }
 
-    await client
-      .query({
-        query: query,
-        variables: variables
-      })
-      .then((result) => {
-        console.log(result)
-        // console.log(result.data.aggregateStat.salesVolume)
-      })
-  })
+    const result = await client.query({
+      query: query,
+      variables: variables
+    })
 
-  const testData = [
-    {
-      collection: 'CryptoPunks',
-      avgSale: '50 Ξ',
-      avgSaleChange: '12%',
-      avgSaleChangePositive: true,
-      highestSale: '86 Ξ',
-      lowestSale: '49 Ξ',
-      volume: '765 Ξ',
-      totalSales: '23',
-      ownersSupply: '80%'
-    },
-    {
-      collection: 'mfers',
-      avgSale: '2.345 Ξ',
-      avgSaleChange: '12%',
-      volume: '765 Ξ',
-      totalSales: '23',
-      ownersSupply: '80%'
-    },
-    {
-      collection: 'CryptoPunks',
-      avgSale: '50 Ξ',
-      avgSaleChange: '12%',
-      volume: '765 Ξ',
-      totalSales: '23',
-      ownersSupply: '80%'
-    },
-    {
-      collection: 'mfers',
-      avgSale: '2.345 Ξ',
-      avgSaleChange: '12%',
-      volume: '765 Ξ',
-      totalSales: '23',
-      ownersSupply: '80%'
-    },
-    {
-      collection: 'CryptoPunks',
-      avgSale: '50 Ξ',
-      avgSaleChange: '12%',
-      volume: '765 Ξ',
-      totalSales: '23',
-      ownersSupply: '80%'
+    const name = result.data.topSale.nodes[0].token.collectionName
+    const ownersPercentage =
+      (result.data.aggregateStat.ownerCount /
+        result.data.aggregateStat.nftCount) *
+      100
+
+    const daySalesVolume = result.data.aggregateStat.daySales.chainTokenPrice
+    const daySalesNumber = result.data.aggregateStat.daySales.totalCount
+    const twoDaySalesVolume =
+      result.data.aggregateStat.twoDaySales.chainTokenPrice
+    const twoDaySalesNumber = result.data.aggregateStat.twoDaySales.totalCount
+
+    const topSale =
+      result.data.topSale.nodes[0].sale.price.chainTokenPrice.decimal
+    const lowSale =
+      result.data.lowSale.nodes[0].sale.price.chainTokenPrice.decimal
+
+    const dayAverage = daySalesVolume / daySalesNumber
+
+    const v1 = dayAverage
+    const v2 =
+      (twoDaySalesVolume - daySalesVolume) /
+      (twoDaySalesNumber - daySalesNumber)
+
+    const yesterdayToTodayChange = ((v1 - v2) / v1) * 100
+
+    const collectionData = {
+      collection: name,
+      avgSale: `${roundIt(dayAverage)} Ξ`,
+      avgSaleChange: `${roundIt(yesterdayToTodayChange)} %`,
+      avgSaleChangePositive: yesterdayToTodayChange >= 0 ? true : false,
+      highestSale: `${roundIt(topSale)} Ξ`,
+      lowestSale: `${roundIt(lowSale)} Ξ`,
+      volume: `${roundIt(daySalesVolume)} Ξ`,
+      totalSales: `${daySalesNumber}`,
+      ownersSupply: `${roundIt(ownersPercentage)} %`
     }
-  ]
-  const html = getHTML(testData)
 
-  // const info = await transporter.sendMail({
-  //   from: `"NFT Brew Barista" <${process.env.EMAIL_USER}>`,
-  //   to: userEmail,
-  //   subject: 'Your Morning NFT Brew',
-  //   html: html
-  // })
+    data.push(collectionData)
+  }
 
-  // console.log('Message sent: %s', info.messageId)
+  return data
 }
-
-index().catch(console.error)
 
 function getHTML(data) {
   // TODO: set image url
