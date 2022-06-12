@@ -3,7 +3,7 @@ import 'dotenv/config'
 import fetch from 'cross-fetch'
 import nodemailer from 'nodemailer'
 
-import apolloPkg from '@apollo/client'
+import apolloPkg from '@apollo/client/core/core.cjs'
 const { ApolloClient, InMemoryCache, HttpLink, gql } = apolloPkg
 
 function roundIt(number) {
