@@ -22,11 +22,8 @@ export default async function handler(
   if (req.method == 'POST') {
     const body = JSON.parse(JSON.stringify(req.body))
     const result = await post(address, body)
-    if (result === true) {
-      res.status(200)
-    } else {
-      res.status(500).send(result)
-    }
+
+    res.status(200).send(result)
   } else if (req.method == 'GET') {
     const user = await get(address)
     if (user) {
@@ -52,21 +49,23 @@ async function get(address: string): Promise<User | null> {
   return result
 }
 
-async function post(address: string, data: any): Promise<boolean | any> {
+async function post(address: string, data: any): Promise<User> {
   let toUpdate: any = {}
   let toCreate: any = {
     address: address
   }
 
-  if (data.email) {
+  console.log(data)
+
+  if (data.email !== undefined) {
     toUpdate.email = data.email
     toCreate.email = data.email
   }
-  if (data.receiveReports) {
+  if (data.receiveReports !== undefined) {
     toUpdate.receiveReports = data.receiveReports
     toCreate.receiveReports = data.receiveReports
   }
-  if (data.collections) {
+  if (data.collections !== undefined) {
     let upsert = []
 
     for (const collection of data.collections) {
@@ -84,11 +83,13 @@ async function post(address: string, data: any): Promise<boolean | any> {
   console.log(toUpdate)
   console.log(toCreate)
 
-  await prisma.user.upsert({
+  const user = await prisma.user.upsert({
     where: {
       address: address
     },
     update: toUpdate,
     create: toCreate
   })
+
+  return user
 }
