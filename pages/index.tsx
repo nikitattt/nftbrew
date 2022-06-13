@@ -1,10 +1,23 @@
 import type { NextPage } from 'next'
+import { useSession } from 'next-auth/react'
+import dynamic from 'next/dynamic'
 import Head from 'next/head'
 import Image from 'next/image'
+import { useRouter } from 'next/router'
 import NavBar from '../components/NavBar'
-import SignInButtonBox from '../components/SignInButtonBox'
+
+const SignInButtonBox = dynamic(() => import('../components/SignInButtonBox'), {
+  ssr: false
+})
 
 const Home: NextPage = () => {
+  const router = useRouter()
+  const { data: session } = useSession()
+
+  if (session && router.isReady) {
+    router.push('/account')
+  }
+
   return (
     <div className="font-sans bg-background text-black-text flex flex-col min-h-screen">
       <Head>

@@ -12,6 +12,7 @@ import { chain, createClient, WagmiConfig, configureChains } from 'wagmi'
 import { alchemyProvider } from 'wagmi/providers/alchemy'
 import { infuraProvider } from 'wagmi/providers/infura'
 import { publicProvider } from 'wagmi/providers/public'
+import { SessionProvider } from 'next-auth/react'
 
 const infuraId = process.env.INFURA_ID
 const alchemyId = process.env.ALCHEMY_ID
@@ -77,7 +78,9 @@ function MyApp({ Component, pageProps }: AppProps) {
         theme={rainbowTheme}
         showRecentTransactions={true}
       >
-        <Component {...pageProps} />{' '}
+        <SessionProvider session={pageProps.session} refetchInterval={0}>
+          <Component {...pageProps} />{' '}
+        </SessionProvider>
       </RainbowKitProvider>
     </WagmiConfig>
   )
