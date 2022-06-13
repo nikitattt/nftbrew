@@ -21,19 +21,6 @@ async function index() {
     }
   })
 
-  // const transporter = await nodemailer.createTransport({
-  //   host: process.env.EMAIL_HOST,
-  //   port: process.env.EMAIL_PORT,
-  //   secure: false, // true only works with port 465
-  //   tls: {
-  //     ciphers: 'SSLv3'
-  //   },
-  //   auth: {
-  //     user: process.env.EMAIL_USER,
-  //     pass: process.env.EMAIL_PASS
-  //   }
-  // })
-
   const emailClient = new postmark.ServerClient(process.env.POSTMARK_API_KEY)
 
   const trackedCollectionsAddresses = [
@@ -53,13 +40,6 @@ async function index() {
 
   const html = getHTML(trackedCollectionsData)
 
-  // const info = await transporter.sendMail({
-  //   from: `"NFT Brew Barista" <${process.env.EMAIL_USER}>`,
-  //   to: userEmail,
-  //   subject: 'Your Morning NFT Brew',
-  //   html: html
-  // })
-
   emailClient.sendEmail({
     From: 'brew@nftbrewbarista.xyz',
     // To: userEmail,
@@ -69,8 +49,6 @@ async function index() {
     TextBody: 'Your Morning NFT Brew',
     MessageStream: 'outbound'
   })
-
-  // console.log('Message sent: %s', info.messageId)
 }
 
 index().catch(console.error)
