@@ -13,6 +13,9 @@ import { alchemyProvider } from 'wagmi/providers/alchemy'
 import { infuraProvider } from 'wagmi/providers/infura'
 import { publicProvider } from 'wagmi/providers/public'
 import { SessionProvider } from 'next-auth/react'
+import { ToastContainer } from 'react-toastify'
+
+import 'react-toastify/dist/ReactToastify.min.css'
 
 const infuraId = process.env.INFURA_ID
 const alchemyId = process.env.ALCHEMY_ID
@@ -52,7 +55,7 @@ const connectors = connectorsForWallets([
     groupName: 'More',
     wallets: [
       wallet.rainbow({ chains }),
-      wallet.coinbase({ chains, appName: 'Bomerang' }),
+      wallet.coinbase({ chains, appName: 'NFTBrew' }),
       wallet.ledger({ chains }),
       wallet.trust({ chains }),
       wallet.argent({ chains })
@@ -80,6 +83,17 @@ function MyApp({ Component, pageProps }: AppProps) {
       >
         <SessionProvider session={pageProps.session} refetchInterval={0}>
           <Component {...pageProps} />{' '}
+          <ToastContainer
+            position="top-right"
+            autoClose={2500}
+            hideProgressBar={false}
+            newestOnTop={true}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+          />
         </SessionProvider>
       </RainbowKitProvider>
     </WagmiConfig>

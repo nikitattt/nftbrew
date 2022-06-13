@@ -1,5 +1,6 @@
 import clsx from 'clsx'
 import { useState } from 'react'
+import { toast } from 'react-toastify'
 import { upsertUserData } from '../../data/user'
 import Button, { ButtonType } from '../Button'
 
@@ -26,7 +27,12 @@ const EmailForm = ({
       }
       setInUpdate(true)
       setNotValidEmail(false)
-      await upsertUserData(data)
+      const done = await upsertUserData(data)
+      if (done) {
+        toast.success('Saved Email!')
+      } else {
+        toast.error("Couldn't Save Email :(")
+      }
       setInUpdate(false)
     } else {
       setNotValidEmail(true)
@@ -36,7 +42,16 @@ const EmailForm = ({
   const handleReceiveReports = async () => {
     if (receiveReports !== undefined) {
       setInUpdate(true)
-      await upsertUserData({ receiveReports: !receiveReports })
+      const done = await upsertUserData({ receiveReports: !receiveReports })
+      if (done) {
+        if (!receiveReports) {
+          toast.success('Saved! NFT Brew Coming!')
+        } else {
+          toast.success('Done. Sad to See You Go :(')
+        }
+      } else {
+        toast.error("Couldn't Save It :(")
+      }
       setInUpdate(false)
     }
   }
