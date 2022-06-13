@@ -2,6 +2,7 @@ import type { NextPage } from 'next'
 import Head from 'next/head'
 import Image from 'next/image'
 import NavBar from '../components/NavBar'
+import SignInButtonBox from '../components/SignInButtonBox'
 
 const Home: NextPage = () => {
   return (
@@ -15,10 +16,10 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <NavBar />
-      <main className="mt-20">
+      <main className="mt-20 px-8">
         <div className="text-center">
           <h1 className="font-black text-5xl">Get nft collections overview</h1>
-          <p className="mt-4 max-w-max mx-auto font-black text-4xl text-grey">
+          <p className="mt-4 font-black text-4xl text-grey">
             in the inbox, every morning
           </p>
         </div>
@@ -30,9 +31,22 @@ const Home: NextPage = () => {
             src="/mail-report.png"
           />
         </div>
-        <div className="mt-12"></div>
+        <div className="mt-20">
+          <SignInButtonBox text="Start brewing with your wallet" />
+        </div>
+        <p className="mt-20 text-center font-black text-2xl text-grey">Then</p>
+        <h2 className="mt-20 text-center font-black text-3xl">
+          Select collections to keep an eye on
+        </h2>
+        <h2 className="mt-20 text-center font-black text-3xl">Set the email</h2>
+        <h2 className="mt-20 text-center font-black text-3xl">
+          And enjoy nice overview every morning
+        </h2>
+        <div className="mt-20">
+          <SignInButtonBox text="Get some nft brew in the morning" />
+        </div>
       </main>
-      <footer className=""></footer>
+      <footer className="my-12"></footer>
     </div>
   )
 }
