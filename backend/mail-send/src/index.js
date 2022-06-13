@@ -1,7 +1,7 @@
 import 'dotenv/config'
 
 import fetch from 'cross-fetch'
-import nodemailer from 'nodemailer'
+import postmark from 'postmark'
 
 import apolloPkg from '@apollo/client/core/core.cjs'
 const { ApolloClient, InMemoryCache, HttpLink, gql } = apolloPkg
@@ -21,18 +21,20 @@ async function index() {
     }
   })
 
-  const transporter = await nodemailer.createTransport({
-    host: process.env.EMAIL_HOST,
-    port: process.env.EMAIL_PORT,
-    secure: false, // true only works with port 465
-    tls: {
-      ciphers: 'SSLv3'
-    },
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS
-    }
-  })
+  // const transporter = await nodemailer.createTransport({
+  //   host: process.env.EMAIL_HOST,
+  //   port: process.env.EMAIL_PORT,
+  //   secure: false, // true only works with port 465
+  //   tls: {
+  //     ciphers: 'SSLv3'
+  //   },
+  //   auth: {
+  //     user: process.env.EMAIL_USER,
+  //     pass: process.env.EMAIL_PASS
+  //   }
+  // })
+
+  const emailClient = new postmark.ServerClient(process.env.POSTMARK_API_KEY)
 
   const trackedCollectionsAddresses = [
     '0x49cf6f5d44e70224e2e23fdcdd2c053f30ada28b',
@@ -51,14 +53,24 @@ async function index() {
 
   const html = getHTML(trackedCollectionsData)
 
-  const info = await transporter.sendMail({
-    from: `"NFT Brew Barista" <${process.env.EMAIL_USER}>`,
-    to: userEmail,
-    subject: 'Your Morning NFT Brew',
-    html: html
+  // const info = await transporter.sendMail({
+  //   from: `"NFT Brew Barista" <${process.env.EMAIL_USER}>`,
+  //   to: userEmail,
+  //   subject: 'Your Morning NFT Brew',
+  //   html: html
+  // })
+
+  emailClient.sendEmail({
+    From: 'brew@nftbrewbarista.xyz',
+    // To: userEmail,
+    To: 'brew@nftbrewbarista.xyz',
+    Subject: 'Your Morning NFT Brew',
+    HtmlBody: html,
+    TextBody: 'Your Morning NFT Brew',
+    MessageStream: 'outbound'
   })
 
-  console.log('Message sent: %s', info.messageId)
+  // console.log('Message sent: %s', info.messageId)
 }
 
 index().catch(console.error)
@@ -270,7 +282,9 @@ function getHTML(data) {
               </tbody>
             </table>
           </div>
-          <div style="margin-left: auto; margin-right: auto; margin-top: 3rem; width: 3rem; border-radius: 9999px; border-top-width: 1px; border-color: #7D7D7D;"></div>
+          <div style="margin-top: 3rem; text-align: center;">
+            <p style="color: #7D7D7D;">Don't want to receive reports anymore? Opt-out on our <a href="https://nftbrewbarista.xyz" target="_blank">website</a></p>
+          </div>
         </div>
       </div>
     </body>
