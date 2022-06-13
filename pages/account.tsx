@@ -17,9 +17,6 @@ const Email: NextPage = () => {
     router.push('/')
   }
 
-  console.log(userData)
-  console.log(isLoading)
-
   return (
     <div className="font-sans bg-background text-black-text flex flex-col min-h-screen">
       <Head>

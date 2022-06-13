@@ -54,15 +54,9 @@ const Collections: NextPage = () => {
     router.push('/')
   }
 
-  if (data) {
-    console.log(data.search.nodes)
-  }
-
   let collectionsFromSearch: any[] = data
     ? JSON.parse(JSON.stringify(data.search.nodes))
     : []
-
-  console.log(collectionsFromSearch)
 
   return (
     <div className="font-sans bg-background text-black-text flex flex-col min-h-screen">
@@ -76,7 +70,21 @@ const Collections: NextPage = () => {
       </Head>
       <NavBar />
       <main className="mt-20 px-8">
-        <div className="text-center">
+        <div className="w-fit mx-auto flex flex-col sm:flex-row gap-4">
+          <Button
+            text="Back"
+            onClick={() => {}}
+            // expanded={true}
+            type={ButtonType.secondary}
+          />
+          <Button
+            text="Save"
+            onClick={() => {}}
+            // expanded={true}
+            type={ButtonType.main}
+          />
+        </div>
+        <div className="mt-20 text-center">
           <p className="font-black text-2xl">Your collections:</p>
         </div>
         <div className="mt-8 max-w-2xl mx-auto flex flex-col gap-4">

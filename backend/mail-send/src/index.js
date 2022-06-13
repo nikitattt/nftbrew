@@ -175,7 +175,6 @@ async function getCollectionsData(client, addresses) {
 }
 
 function getHTML(data) {
-  // TODO: set image url
   let html = `
   <!DOCTYPE html>
   <html>

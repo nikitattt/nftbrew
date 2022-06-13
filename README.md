@@ -1,5 +1,7 @@
 # NFTBrew
 
+## Link to the website: https://nftbrewbarista.xyz
+
 ## Project walk-through
 
 This is the Next project with the [EIP-4361](https://docs.login.xyz/general-information/siwe-overview/eip-4361) for authentication, Planetscale for data storage, [Zora API](https://api.zora.co/) for NFT collections data retrieval.

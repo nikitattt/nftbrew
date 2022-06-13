@@ -35,9 +35,10 @@ const CollectionsForm = ({
           expanded={true}
         />
       </div>
-      <p className="mt-4 max-w-sm mx-auto font-black text-sm text-red">
+      <p className="mt-4 max-w-sm mx-auto font-black text-sm text-purple">
         Collection selection in still in development. We are on it and will
-        launch ASAP. Check on us bit later :)
+        launch ASAP. In meantime, you can save your email and we will reach back
+        to you when we fully launch 💪
       </p>
     </div>
   )
