@@ -37,12 +37,7 @@ const Home: NextPage = () => {
           </p>
         </div>
         <div className="mt-20 max-w-4xl mx-auto rounded-2xl shadow-xl">
-          <img
-            className="rounded-2xl"
-            // layout="fill"
-            // objectFit="cover"
-            src="/mail-report.png"
-          />
+          <img className="rounded-2xl" src="/mail-report.png" />
         </div>
         <div className="mt-20">
           <SignInButtonBox text="Start brewing with your wallet" />
@@ -51,10 +46,19 @@ const Home: NextPage = () => {
         <h2 className="mt-20 text-center font-black text-3xl">
           Select collections to keep an eye on
         </h2>
+        <div className="mt-20 max-w-4xl mx-auto rounded-2xl shadow-xl">
+          <img className="rounded-2xl" src="/collections-selection.png" />
+        </div>
         <h2 className="mt-20 text-center font-black text-3xl">Set the email</h2>
+        <div className="mt-20 max-w-4xl mx-auto rounded-2xl shadow-xl">
+          <img className="rounded-2xl" src="/email-enter.png" />
+        </div>
         <h2 className="mt-20 text-center font-black text-3xl">
-          And enjoy nice overview every morning
+          And receive overview every morning
         </h2>
+        <div className="mt-20 max-w-4xl mx-auto rounded-2xl shadow-xl">
+          <img className="rounded-2xl" src="/mail-in-inbox.png" />
+        </div>
         <div className="mt-20">
           <SignInButtonBox text="Get some nft brew in the morning" />
         </div>
