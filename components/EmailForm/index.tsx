@@ -72,7 +72,7 @@ const EmailForm = ({
       />
       {notValidEmail && (
         <p className="mt-2 font-black text-lg text-red text-center px-4">
-          Your email is not right or haven't changed
+          Your email is not right or have not changed
         </p>
       )}
       <div className="mt-4">

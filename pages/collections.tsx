@@ -92,8 +92,12 @@ const Collections: NextPage = () => {
         <div className="text-black font-bold max-w-2xl mx-auto text-sm text-center my-4">
           <p className="mt-2">
             Due to the current characteristics of Zora API, the best way to find
-            collection of your interest is by getting it's address from{' '}
-            <a href="https://looksrare.org/collections" target="_blank">
+            collection of your interest is by getting its address from{' '}
+            <a
+              href="https://looksrare.org/collections"
+              target="_blank"
+              rel="noreferrer"
+            >
               LookRare
             </a>{' '}
             website.
