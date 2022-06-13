@@ -8,6 +8,7 @@ import {
   RainbowKitProvider,
   lightTheme
 } from '@rainbow-me/rainbowkit'
+import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client'
 import { chain, createClient, WagmiConfig, configureChains } from 'wagmi'
 import { alchemyProvider } from 'wagmi/providers/alchemy'
 import { infuraProvider } from 'wagmi/providers/infura'
@@ -19,6 +20,7 @@ import 'react-toastify/dist/ReactToastify.min.css'
 
 const infuraId = process.env.INFURA_ID
 const alchemyId = process.env.ALCHEMY_ID
+const zoraApiKey = process.env.ZORA_API_KEY
 
 const { chains, provider } = configureChains(
   [chain.mainnet],
@@ -73,6 +75,14 @@ const rainbowTheme = lightTheme({
   accentColor: '#221B1A'
 })
 
+const client = new ApolloClient({
+  uri: 'https://api.zora.co/graphql',
+  cache: new InMemoryCache(),
+  headers: {
+    'X-API-KEY': zoraApiKey ?? ''
+  }
+})
+
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <WagmiConfig client={wagmiClient}>
@@ -82,18 +92,20 @@ function MyApp({ Component, pageProps }: AppProps) {
         showRecentTransactions={true}
       >
         <SessionProvider session={pageProps.session} refetchInterval={0}>
-          <Component {...pageProps} />{' '}
-          <ToastContainer
-            position="top-right"
-            autoClose={2500}
-            hideProgressBar={false}
-            newestOnTop={true}
-            closeOnClick
-            rtl={false}
-            pauseOnFocusLoss
-            draggable
-            pauseOnHover
-          />
+          <ApolloProvider client={client}>
+            <Component {...pageProps} />{' '}
+            <ToastContainer
+              position="top-right"
+              autoClose={2500}
+              hideProgressBar={false}
+              newestOnTop={true}
+              closeOnClick
+              rtl={false}
+              pauseOnFocusLoss
+              draggable
+              pauseOnHover
+            />
+          </ApolloProvider>
         </SessionProvider>
       </RainbowKitProvider>
     </WagmiConfig>

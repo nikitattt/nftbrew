@@ -1,19 +1,68 @@
+import { Collection } from '@prisma/client'
+import clsx from 'clsx'
 import type { NextPage } from 'next'
 import { useSession } from 'next-auth/react'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
-import CollectionsForm from '../components/CollectionsForm'
-import EmailForm from '../components/EmailForm'
+import { useState } from 'react'
 import NavBar from '../components/NavBar'
-import { useUser } from '../data/user'
+import { AccountState, useAccountStore } from '../state/account'
+import { useQuery, gql } from '@apollo/client'
+import Button, { ButtonType } from '../components/Button'
+import CollectionCard from '../components/CollectionCard'
+
+const SEARCH_COLLECTIONS = gql`
+  query SearchCollections($text: String!) {
+    search(
+      query: { text: $text }
+      pagination: { limit: 50 }
+      filter: { entityType: COLLECTION }
+    ) {
+      nodes {
+        name
+        collectionAddress
+        entity {
+          ... on Collection {
+            symbol
+            totalSupply
+          }
+        }
+      }
+    }
+  }
+`
 
 const Collections: NextPage = () => {
   const router = useRouter()
   const { data: session } = useSession()
 
+  const [searchText, setSearchText] = useState('')
+
+  const collections = useAccountStore(
+    (state: AccountState) => state.collections
+  )
+
+  const addCollection = useAccountStore(
+    (state: AccountState) => state.addCollection
+  )
+
+  const { loading, error, data } = useQuery(SEARCH_COLLECTIONS, {
+    variables: { text: searchText }
+  })
+
   if (!session && router.isReady) {
     router.push('/')
   }
+
+  if (data) {
+    console.log(data.search.nodes)
+  }
+
+  let collectionsFromSearch: any[] = data
+    ? JSON.parse(JSON.stringify(data.search.nodes))
+    : []
+
+  console.log(collectionsFromSearch)
 
   return (
     <div className="font-sans bg-background text-black-text flex flex-col min-h-screen">
@@ -26,7 +75,108 @@ const Collections: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <NavBar />
-      <main className="mt-20 px-8"></main>
+      <main className="mt-20 px-8">
+        <div className="text-center">
+          <p className="font-black text-2xl">Your collections:</p>
+        </div>
+        <div className="mt-8 max-w-2xl mx-auto flex flex-col gap-4">
+          {collections &&
+            collections.map(function (collection, place) {
+              return (
+                <div key={place}>
+                  <CollectionCard collectionAddress={collection.address} />
+                </div>
+              )
+            })}
+        </div>
+        <div className="text-black font-bold max-w-2xl mx-auto text-sm text-center my-4">
+          <p className="mt-2">
+            Due to the current characteristics of Zora API, the best way to find
+            collection of your interest is by getting it's address from{' '}
+            <a href="https://looksrare.org/collections" target="_blank">
+              LookRare
+            </a>{' '}
+            website.
+          </p>
+          <p className="mt-2">
+            Open collection of your interest there and copy its address from the
+            URL: https://looksrare.org/collections/
+            <span className="text-red">
+              0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D
+            </span>
+          </p>
+          <p className="mt-2">
+            Paste this address into search bar and add it to your collection.
+          </p>
+        </div>
+        <div className="mt-8 max-w-2xl mx-auto flex flex-col sm:flex-row gap-4">
+          <input
+            type="text"
+            value={searchText}
+            placeholder="Collection Name"
+            onChange={(e) => setSearchText(e.target.value)}
+            className={clsx(
+              'h-12 w-full font-black text-xl pt-px px-4 rounded-2xl',
+              'bg-white bg-opacity-60 caret-grey-dark text-grey-dark outline-grey',
+              'placeholder:text-grey-light'
+            )}
+          />
+          <Button text="Search" onClick={() => {}} />
+        </div>
+        {loading ? (
+          <p className="mt-4 text-center font-bold text-xl text-grey">
+            Loading...
+          </p>
+        ) : (
+          <div className="mt-4 max-w-2xl mx-auto flex flex-col gap-4">
+            {collectionsFromSearch.map(function (collection, place) {
+              if (
+                // collection.entity &&
+                // collection.entity?.totalSupply !== null &&
+                // collection.entity?.totalSupply !== 0
+                true
+              ) {
+                console.log('data')
+                console.log(data)
+
+                return (
+                  <div
+                    key={place}
+                    className="flex flex-row justify-between items-center bg-white bg-opacity-60 rounded-2xl py-4 px-4"
+                  >
+                    <div className="flex flex-col font-bold text-xs">
+                      <p className="text-lg">
+                        <span className="text-grey">Name:</span>{' '}
+                        {collection.name}
+                      </p>
+                      <p>
+                        <span className="text-grey">Symbol:</span>{' '}
+                        {collection.entity?.symbol}
+                      </p>
+                      <p>
+                        <span className="text-grey">Total Supply:</span>{' '}
+                        {collection.entity?.totalSupply}
+                      </p>
+                      <p>
+                        <span className="text-grey">Address:</span>{' '}
+                        {collection.collectionAddress}
+                      </p>
+                    </div>
+                    <Button
+                      text="Add"
+                      onClick={() => {
+                        addCollection({
+                          address: collection.collectionAddress
+                        })
+                      }}
+                    />
+                  </div>
+                )
+              } else return
+            })}
+          </div>
+        )}
+      </main>
 
       <footer className="my-12"></footer>
     </div>
