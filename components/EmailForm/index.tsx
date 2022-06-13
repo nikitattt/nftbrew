@@ -15,8 +15,6 @@ const EmailForm = ({
   const [notValidEmail, setNotValidEmail] = useState(false)
   const [inUpdate, setInUpdate] = useState(false)
 
-  console.log('email - ' + email)
-
   const handleEmail = async () => {
     if (validEmail(emailValue) && email !== emailValue) {
       var data: any

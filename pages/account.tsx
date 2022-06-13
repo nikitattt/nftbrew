@@ -2,6 +2,7 @@ import type { NextPage } from 'next'
 import { useSession } from 'next-auth/react'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
+import CollectionsForm from '../components/CollectionsForm'
 import EmailForm from '../components/EmailForm'
 import NavBar from '../components/NavBar'
 import { useUser } from '../data/user'
@@ -54,9 +55,7 @@ const Email: NextPage = () => {
               </div>
             )}
 
-            <div className="text-center">
-              <p className="font-black text-2xl">Your collections</p>
-            </div>
+            <CollectionsForm collections={userData.collections} />
             <EmailForm
               email={userData.email}
               receiveReports={userData.receiveReports}
