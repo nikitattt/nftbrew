@@ -40,6 +40,7 @@ const Collections: NextPage = () => {
 
   const [searchText, setSearchText] = useState('')
   const [inUpdate, setInUpdate] = useState(false)
+  const [showSaveRemainder, setShowSaveRemainder] = useState(false)
 
   const collections = useAccountStore(
     (state: AccountState) => state.collections
@@ -90,19 +91,35 @@ const Collections: NextPage = () => {
       </Head>
       <NavBar />
       <main className="mt-20 px-8">
-        <div className="w-fit mx-auto flex flex-col sm:flex-row gap-4">
-          <Button
-            text="Back"
-            onClick={() => {
-              router.push('/account')
-            }}
-            type={ButtonType.secondary}
-          />
-          <Button
-            text="Save My Collections"
-            onClick={() => !inUpdate && handleCollections()}
-            type={ButtonType.main}
-          />
+        <div
+          className={clsx(
+            showSaveRemainder &&
+              'bg-yellow-background w-fit mx-auto py-8 px-8 text-center rounded-2xl'
+          )}
+        >
+          <div className="w-fit mx-auto flex flex-col sm:flex-row gap-4">
+            <Button
+              text="Back"
+              onClick={() => {
+                router.push('/account')
+              }}
+              type={ButtonType.secondary}
+            />
+            <Button
+              text="Save My Collections"
+              onClick={() => !inUpdate && handleCollections()}
+              type={ButtonType.main}
+            />
+          </div>
+          <p
+            className={clsx(
+              showSaveRemainder
+                ? 'mt-6 text-orange text-2xl font-bold'
+                : 'invisible'
+            )}
+          >
+            Don't forget to save updates!
+          </p>
         </div>
         <div className="mt-20 text-center">
           <p className="font-black text-2xl">Your collections:</p>
@@ -115,7 +132,10 @@ const Collections: NextPage = () => {
                   <CollectionCard
                     collectionAddress={collection.address}
                     onRemoveClick={() => {
-                      removeCollection(collection)
+                      //   removeCollection(collection)
+                      toast.warning(
+                        'Sorry, we still working on collection removal functionality'
+                      )
                     }}
                   />
                 </div>
@@ -207,9 +227,13 @@ const Collections: NextPage = () => {
                     <Button
                       text="Add"
                       onClick={() => {
+                        setShowSaveRemainder(true)
                         addCollection({
                           address: collection.collectionAddress
                         })
+                        toast.info(
+                          "Don't forget to save your updates with the button at the top!"
+                        )
                       }}
                     />
                   </div>
@@ -220,7 +244,7 @@ const Collections: NextPage = () => {
         )}
       </main>
 
-      <footer className="my-12"></footer>
+      <footer className="my-20"></footer>
     </div>
   )
 }

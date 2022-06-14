@@ -61,7 +61,7 @@ const Email: NextPage = () => {
         )}
       </main>
 
-      <footer className="my-12"></footer>
+      <footer className="my-20"></footer>
     </div>
   )
 }

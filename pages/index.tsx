@@ -63,7 +63,7 @@ const Home: NextPage = () => {
           <SignInButtonBox text="Get some nft brew in the morning" />
         </div>
       </main>
-      <footer className="my-12"></footer>
+      <footer className="my-20"></footer>
     </div>
   )
 }
