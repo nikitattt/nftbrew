@@ -152,6 +152,9 @@ const Collections: NextPage = () => {
             Paste this address into search bar and add it to your collection.
           </p>
         </div>
+        <div className="mt-8 text-center">
+          <p className="font-black text-2xl">Search for a collection:</p>
+        </div>
         <div className="mt-8 max-w-2xl mx-auto flex flex-col sm:flex-row gap-4">
           <input
             type="text"

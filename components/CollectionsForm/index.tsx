@@ -3,6 +3,7 @@ import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/router'
 import { AccountState, useAccountStore } from '../../state/account'
 import Button, { ButtonType } from '../Button'
+import CollectionCard from '../CollectionCard'
 
 const CollectionsForm = ({
   collections
@@ -23,9 +24,19 @@ const CollectionsForm = ({
   return (
     <div className="mt-20 max-w-lg mx-auto text-center">
       <p className="font-black text-2xl">Your collections:</p>
+      <div className="mt-8 max-w-2xl mx-auto flex flex-col gap-4">
+        {collections &&
+          collections.map(function (collection, place) {
+            return (
+              <div key={place}>
+                <CollectionCard collectionAddress={collection.address} />
+              </div>
+            )
+          })}
+      </div>
       <div className="mt-4">
         <Button
-          text="Add Collections"
+          text={collections ? 'Modify Collections' : 'Add Collections'}
           onClick={() => {
             if (collections) {
               setCollections(collections)
@@ -35,11 +46,11 @@ const CollectionsForm = ({
           expanded={true}
         />
       </div>
-      <p className="mt-4 max-w-sm mx-auto font-black text-sm text-purple">
+      {/* <p className="mt-4 max-w-sm mx-auto font-black text-sm text-purple">
         Collection selection in still in development. We are on it and will
         launch ASAP. In meantime, you can save your email and we will reach back
         to you when we fully launch 💪
-      </p>
+      </p> */}
     </div>
   )
 }

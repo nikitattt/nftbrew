@@ -28,7 +28,7 @@ const Email: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <NavBar />
-      <main className="mt-20 px-8">
+      <main className="px-8">
         {isLoading ? (
           <div className="mt-12">
             <p className="text-center font-bold text-grey">

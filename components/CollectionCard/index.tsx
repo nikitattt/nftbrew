@@ -38,8 +38,6 @@ const CollectionCard = ({
     return <div className="bg-white bg-opacity-60 rounded-2xl h-12" />
   }
 
-  console.log(data)
-
   const imageUrl = data.token.token.image.mediaEncoding.thumbnail ?? ''
   const name = data.token.token.tokenContract.name ?? ''
   const totalSupply = data.token.token.tokenContract.totalSupply ?? ''
@@ -51,7 +49,7 @@ const CollectionCard = ({
         <div className="h-16 w-16 rounded-full mr-4">
           <img className="rounded-full" src={imageUrl} />
         </div>
-        <div className="flex flex-col font-bold text-xs">
+        <div className="flex flex-col font-bold text-xs text-left">
           <p className="text-lg">
             <span className="text-grey">Name:</span> {name}
           </p>
