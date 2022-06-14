@@ -119,7 +119,7 @@ const Collections: NextPage = () => {
                 : 'invisible'
             )}
           >
-            Don't forget to save updates!
+            Do not forget to save updates!
           </p>
         </div>
         <div className="mt-20 text-center">
@@ -145,10 +145,10 @@ const Collections: NextPage = () => {
         </div>
         <div className="text-black font-bold max-w-2xl mx-auto text-xs text-center my-4">
           <p className="mt-12">
-            Due to the current characteristics of Zora API, sometimes it's hard
+            Due to the current characteristics of Zora API, sometimes it is hard
             to find the collection you are looking for by the keywords since
-            Zora might show all similar "copy" collections too and in this case
-            the best way is to get address of the collections from, for example,{' '}
+            Zora might show all similar collections too and in this case the
+            best way is to get address of the collections from, for example,{' '}
             <a
               href="https://looksrare.org/collections"
               target="_blank"
