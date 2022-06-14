@@ -43,7 +43,7 @@ const SignInButtonBox = ({ text }: { text: string }) => {
 
   if (account?.address && account?.connector) {
     return (
-      <div className="max-w-3xl mx-auto">
+      <div className="w-fit mx-auto">
         <div>
           <Button
             text={
@@ -54,7 +54,7 @@ const SignInButtonBox = ({ text }: { text: string }) => {
                 handleLogin(account.address!, account.connector!)
               }
             }}
-            expanded={true}
+            expanded={false}
             animation={ButtonAnimation.sm}
           />
         </div>
@@ -68,7 +68,7 @@ const SignInButtonBox = ({ text }: { text: string }) => {
   }
 
   return (
-    <div className="max-w-3xl mx-auto">
+    <div className="w-fit mx-auto">
       <ConnectButton.Custom>
         {({ openConnectModal }) => {
           return (
@@ -76,7 +76,7 @@ const SignInButtonBox = ({ text }: { text: string }) => {
               <Button
                 text={text}
                 onClick={openConnectModal}
-                expanded={true}
+                expanded={false}
                 animation={ButtonAnimation.sm}
               />
             </div>

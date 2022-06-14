@@ -153,6 +153,7 @@ const Collections: NextPage = () => {
               href="https://looksrare.org/collections"
               target="_blank"
               rel="noreferrer"
+              className="text-[#0cc355]"
             >
               LookRare
             </a>{' '}

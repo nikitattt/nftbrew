@@ -15,6 +15,7 @@ import { infuraProvider } from 'wagmi/providers/infura'
 import { publicProvider } from 'wagmi/providers/public'
 import { SessionProvider } from 'next-auth/react'
 import { ToastContainer } from 'react-toastify'
+import Script from 'next/script'
 
 import 'react-toastify/dist/ReactToastify.min.css'
 
@@ -105,6 +106,15 @@ function MyApp({ Component, pageProps }: AppProps) {
               draggable
               pauseOnHover
             />
+            <Script src="https://scripts.simpleanalyticscdn.com/latest.js" />
+            <noscript>
+              {/* eslint-disable @next/next/no-img-element */}
+              <img
+                src="https://queue.simpleanalyticscdn.com/noscript.gif"
+                alt=""
+                referrerPolicy="no-referrer-when-downgrade"
+              />
+            </noscript>
           </ApolloProvider>
         </SessionProvider>
       </RainbowKitProvider>

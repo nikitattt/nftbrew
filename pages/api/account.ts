@@ -55,8 +55,6 @@ async function post(address: string, data: any): Promise<User> {
     address: address
   }
 
-  console.log(data)
-
   if (data.email !== undefined) {
     toUpdate.email = data.email
     toCreate.email = data.email
@@ -71,7 +69,7 @@ async function post(address: string, data: any): Promise<User> {
     for (const collection of data.collections) {
       upsert.push({
         create: collection,
-        update: collection,
+        // update: collection,
         where: { address: collection.address }
       })
     }
@@ -79,12 +77,9 @@ async function post(address: string, data: any): Promise<User> {
     toUpdate.collections = {}
     toCreate.collections = {}
 
-    toUpdate.collections.upsert = upsert
-    toCreate.collections.create = data.collections
+    toUpdate.collections.connectOrCreate = upsert
+    toCreate.collections.connectOrCreate = upsert
   }
-
-  console.log(toUpdate)
-  console.log(toCreate)
 
   const user = await prisma.user.upsert({
     where: {

@@ -29,7 +29,7 @@ const Email: NextPage = () => {
       </Head>
       <NavBar />
       <main className="px-8">
-        {isLoading ? (
+        {isLoading && !userData ? (
           <div className="mt-12">
             <p className="text-center font-bold text-grey">
               Let us load your profile...
@@ -37,14 +37,16 @@ const Email: NextPage = () => {
           </div>
         ) : (
           <div>
-            {(!userData.email ||
-              !userData.collections ||
-              !userData.collections.length) && (
+            {(!userData?.email ||
+              !userData?.collections ||
+              !userData?.collections.length) && (
               <div className="bg-yellow-background max-w-xl mx-auto py-3 px-8 rounded-2xl mb-12">
                 <p className="text-center text-orange font-bold text-lg">
-                  You need to add {!userData.email && 'email '}{' '}
-                  {!userData.email && 'and '}
-                  {(!userData.collections || !userData.collections.length) &&
+                  You need to add {!userData?.email && 'email '}{' '}
+                  {!userData?.email &&
+                    (!userData?.collections || !userData?.collections.length) &&
+                    'and '}
+                  {(!userData?.collections || !userData?.collections.length) &&
                     'some collections '}{' '}
                   before we can organise delivery of your NFT Brew tomorrow
                   morning
@@ -52,10 +54,10 @@ const Email: NextPage = () => {
               </div>
             )}
 
-            <CollectionsForm collections={userData.collections} />
+            <CollectionsForm collections={userData?.collections} />
             <EmailForm
-              email={userData.email}
-              receiveReports={userData.receiveReports}
+              email={userData?.email}
+              receiveReports={userData?.receiveReports}
             />
           </div>
         )}

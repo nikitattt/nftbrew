@@ -36,11 +36,14 @@ const Home: NextPage = () => {
             in the inbox, every morning
           </p>
         </div>
+        <div className="mt-20">
+          <SignInButtonBox text="Start brewing with your wallet" />
+        </div>
         <div className="mt-20 max-w-4xl mx-auto rounded-2xl shadow-xl">
           <img className="rounded-2xl" src="/mail-report.png" />
         </div>
         <div className="mt-20">
-          <SignInButtonBox text="Start brewing with your wallet" />
+          <SignInButtonBox text="Sign up with your wallet" />
         </div>
         <p className="mt-20 text-center font-black text-2xl text-grey">Then</p>
         <h2 className="mt-20 text-center font-black text-3xl">
