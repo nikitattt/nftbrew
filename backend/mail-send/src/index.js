@@ -6,6 +6,9 @@ import postmark from 'postmark'
 import apolloPkg from '@apollo/client/core/core.cjs'
 const { ApolloClient, InMemoryCache, HttpLink, gql } = apolloPkg
 
+import { PrismaClient } from '@prisma/client'
+const prisma = new PrismaClient()
+
 function roundIt(number) {
   return Math.round((number + Number.EPSILON) * 100) / 100
 }
@@ -23,32 +26,36 @@ async function index() {
 
   const emailClient = new postmark.ServerClient(process.env.POSTMARK_API_KEY)
 
-  const trackedCollectionsAddresses = [
-    '0x49cf6f5d44e70224e2e23fdcdd2c053f30ada28b',
-    '0x79fcdef22feed20eddacbb2587640e45491b757f',
-    '0x1a92f7381b9f03921564a437210bb9396471050c',
-    '0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d',
-    '0x60e4d786628fea6478f785a6d7e704777c86a7c6',
-    '0x23581767a106ae21c074b2276d25e5c3e136a68b',
-    '0xed5af388653567af2f388e6224dc7c4b3241c544'
-  ]
-
-  const trackedCollectionsData = await getCollectionsData(
-    client,
-    trackedCollectionsAddresses
-  )
-
-  const html = getHTML(trackedCollectionsData)
-
-  emailClient.sendEmail({
-    From: 'brew@nftbrewbarista.xyz',
-    // To: userEmail,
-    To: 'brew@nftbrewbarista.xyz',
-    Subject: 'Your Morning NFT Brew',
-    HtmlBody: html,
-    TextBody: 'Your Morning NFT Brew',
-    MessageStream: 'outbound'
+  const usersData = await prisma.user.findMany({
+    where: {
+      receiveReports: true
+    },
+    include: {
+      collections: true
+    }
   })
+
+  for (const data of usersData) {
+    if (!data.email) {
+      continue
+    }
+
+    const trackedCollectionsData = await getCollectionsData(
+      client,
+      data.collections
+    )
+
+    const html = getHTML(trackedCollectionsData)
+
+    emailClient.sendEmail({
+      From: 'brew@nftbrewbarista.xyz',
+      To: data.email,
+      Subject: 'Your Morning NFT Brew',
+      HtmlBody: html,
+      TextBody: 'Your Morning NFT Brew',
+      MessageStream: 'outbound'
+    })
+  }
 }
 
 index().catch(console.error)
@@ -122,13 +129,17 @@ async function getCollectionsData(client, addresses) {
     `
 
     const variables = {
-      address: address
+      address: address.address
     }
 
     const result = await client.query({
       query: query,
       variables: variables
     })
+
+    if (result.data.topSale.nodes.length === 0) {
+      continue
+    }
 
     const name = result.data.topSale.nodes[0].token.collectionName
     const ownersPercentage =
@@ -260,7 +271,7 @@ function getHTML(data) {
             </table>
           </div>
           <div style="margin-top: 3rem; text-align: center;">
-            <p style="color: #7D7D7D;">Don't want to receive reports anymore? Opt-out on our <a href="https://nftbrewbarista.xyz" target="_blank">website</a></p>
+            <p style="color: #7D7D7D;">Don't want to receive reports anymore? Opt-out on the <a href="https://nftbrewbarista.xyz" target="_blank">website</a></p>
           </div>
         </div>
       </div>
