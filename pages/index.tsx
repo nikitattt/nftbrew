@@ -60,7 +60,7 @@ const Home: NextPage = () => {
           And receive overview every morning
         </h2>
         <div className="mt-20 max-w-4xl mx-auto rounded-2xl shadow-xl">
-          <img className="rounded-2xl" src="/mail-in-inbox.png" />
+          <img className="rounded-2xl" src="/mail-report.png" />
         </div>
         <div className="mt-20">
           <SignInButtonBox text="Get some nft brew in the morning" />
