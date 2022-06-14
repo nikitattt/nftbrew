@@ -37,23 +37,6 @@ const EmailForm = ({
     }
   }
 
-  const handleReceiveReports = async () => {
-    if (receiveReports !== undefined) {
-      setInUpdate(true)
-      const done = await upsertUserData({ receiveReports: !receiveReports })
-      if (done) {
-        if (!receiveReports) {
-          toast.success('Saved! NFT Brew Coming!')
-        } else {
-          toast.success('Done. Sad to See You Go :(')
-        }
-      } else {
-        toast.error("Couldn't Save It :(")
-      }
-      setInUpdate(false)
-    }
-  }
-
   return (
     <div className="mt-20 max-w-lg mx-auto">
       <div className="text-center">
@@ -81,18 +64,10 @@ const EmailForm = ({
           onClick={() => !inUpdate && handleEmail()}
           type={ButtonType.main}
           expanded={true}
+          loading={inUpdate}
         />
       </div>
-      {email && (
-        <div className="mt-4">
-          <Button
-            text={receiveReports ? 'Stop receiving emails' : 'Receive reports'}
-            onClick={() => !inUpdate && handleReceiveReports()}
-            type={ButtonType.secondary}
-            expanded={true}
-          />
-        </div>
-      )}
+      {email && <EmailReceiveReports receiveReports={receiveReports} />}
     </div>
   )
 }
@@ -103,4 +78,41 @@ function validEmail(email: string) {
   const regularExpression =
     /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
   return regularExpression.test(String(email).toLowerCase())
+}
+
+const EmailReceiveReports = ({
+  receiveReports
+}: {
+  receiveReports: boolean
+}) => {
+  const [inUpdate, setInUpdate] = useState(false)
+
+  const handleReceiveReports = async () => {
+    if (receiveReports !== undefined) {
+      setInUpdate(true)
+      const done = await upsertUserData({ receiveReports: !receiveReports })
+      if (done) {
+        if (!receiveReports) {
+          toast.success('Saved! NFT Brew Coming!')
+        } else {
+          toast.success('Done. Sad to See You Go :(')
+        }
+      } else {
+        toast.error("Couldn't Save It :(")
+      }
+      setInUpdate(false)
+    }
+  }
+
+  return (
+    <div className="mt-4">
+      <Button
+        text={receiveReports ? 'Stop receiving emails' : 'Receive reports'}
+        onClick={() => !inUpdate && handleReceiveReports()}
+        type={ButtonType.secondary}
+        expanded={true}
+        loading={inUpdate}
+      />
+    </div>
+  )
 }

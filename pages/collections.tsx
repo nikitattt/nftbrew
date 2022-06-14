@@ -109,6 +109,7 @@ const Collections: NextPage = () => {
               text="Save My Collections"
               onClick={() => !inUpdate && handleCollections()}
               type={ButtonType.main}
+              loading={inUpdate}
             />
           </div>
           <p

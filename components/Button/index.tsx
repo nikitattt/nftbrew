@@ -1,5 +1,6 @@
 import clsx from 'clsx'
 import { useState } from 'react'
+import { SpinnerCircularFixed } from 'spinners-react'
 
 export enum ButtonAnimation {
   sm = 'sm',
@@ -26,6 +27,7 @@ type ButtonProps = {
   expanded?: boolean
   animation?: ButtonAnimation
   icon?: ButtonIcon
+  loading?: boolean
 }
 
 const animationToClass: Record<ButtonAnimation, string> = {
@@ -41,7 +43,8 @@ const Button = ({
   type = ButtonType.main,
   expanded = false,
   animation = ButtonAnimation.base,
-  icon = ButtonIcon.none
+  icon = ButtonIcon.none,
+  loading = false
 }: ButtonProps) => {
   const [onClickAnimation, setOnClickAnimation] = useState(false)
 
@@ -65,6 +68,15 @@ const Button = ({
     >
       <div className="flex flex-row justify-center items-center">
         <p className="font-black text-xl pt-px">{text}</p>
+        <SpinnerCircularFixed
+          className="ml-4"
+          size={20}
+          thickness={300}
+          speed={150}
+          color={type === ButtonType.main ? '#FFFFFF' : '#616161'}
+          enabled={loading}
+          secondaryColor={type === ButtonType.main ? '#616161' : '#C7C7C7'}
+        />
         {icon === ButtonIcon.share && <ShareIcon type={type} />}
         {icon === ButtonIcon.inNewTab && <NewTabIcon type={type} />}
       </div>
