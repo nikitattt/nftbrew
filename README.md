@@ -1,4 +1,4 @@
-# NFTBrew
+# NFTBrew - daily newsletter with market updates on your beloved NFT projects
 
 ## Link to the website: https://nftbrewbarista.xyz
 
