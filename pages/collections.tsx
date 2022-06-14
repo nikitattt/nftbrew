@@ -10,6 +10,8 @@ import { AccountState, useAccountStore } from '../state/account'
 import { useQuery, gql } from '@apollo/client'
 import Button, { ButtonType } from '../components/Button'
 import CollectionCard from '../components/CollectionCard'
+import { toast } from 'react-toastify'
+import { upsertUserData } from '../data/user'
 
 const SEARCH_COLLECTIONS = gql`
   query SearchCollections($text: String!) {
@@ -37,6 +39,7 @@ const Collections: NextPage = () => {
   const { data: session } = useSession()
 
   const [searchText, setSearchText] = useState('')
+  const [inUpdate, setInUpdate] = useState(false)
 
   const collections = useAccountStore(
     (state: AccountState) => state.collections
@@ -45,6 +48,9 @@ const Collections: NextPage = () => {
   const addCollection = useAccountStore(
     (state: AccountState) => state.addCollection
   )
+  const removeCollection = useAccountStore(
+    (state: AccountState) => state.removeCollection
+  )
 
   const { loading, error, data } = useQuery(SEARCH_COLLECTIONS, {
     variables: { text: searchText }
@@ -52,6 +58,20 @@ const Collections: NextPage = () => {
 
   if (!session && router.isReady) {
     router.push('/')
+  }
+
+  const handleCollections = async () => {
+    if (collections) {
+      setInUpdate(true)
+      const done = await upsertUserData({ collections: collections })
+      if (done) {
+        toast.success('Saved Collections!')
+        router.push('/account')
+      } else {
+        toast.error("Couldn't Save Collections :(")
+      }
+      setInUpdate(false)
+    }
   }
 
   let collectionsFromSearch: any[] = data
@@ -73,14 +93,14 @@ const Collections: NextPage = () => {
         <div className="w-fit mx-auto flex flex-col sm:flex-row gap-4">
           <Button
             text="Back"
-            onClick={() => {}}
-            // expanded={true}
+            onClick={() => {
+              router.push('/account')
+            }}
             type={ButtonType.secondary}
           />
           <Button
-            text="Save"
-            onClick={() => {}}
-            // expanded={true}
+            text="Save My Collections"
+            onClick={() => !inUpdate && handleCollections()}
             type={ButtonType.main}
           />
         </div>
@@ -92,15 +112,22 @@ const Collections: NextPage = () => {
             collections.map(function (collection, place) {
               return (
                 <div key={place}>
-                  <CollectionCard collectionAddress={collection.address} />
+                  <CollectionCard
+                    collectionAddress={collection.address}
+                    onRemoveClick={() => {
+                      removeCollection(collection)
+                    }}
+                  />
                 </div>
               )
             })}
         </div>
-        <div className="text-black font-bold max-w-2xl mx-auto text-sm text-center my-4">
-          <p className="mt-2">
-            Due to the current characteristics of Zora API, the best way to find
-            collection of your interest is by getting its address from{' '}
+        <div className="text-black font-bold max-w-2xl mx-auto text-xs text-center my-4">
+          <p className="mt-12">
+            Due to the current characteristics of Zora API, sometimes it's hard
+            to find the collection you are looking for by the keywords since
+            Zora might show all similar "copy" collections too and in this case
+            the best way is to get address of the collections from, for example,{' '}
             <a
               href="https://looksrare.org/collections"
               target="_blank"
@@ -111,8 +138,12 @@ const Collections: NextPage = () => {
             website.
           </p>
           <p className="mt-2">
-            Open collection of your interest there and copy its address from the
-            URL: https://looksrare.org/collections/
+            For this, open collection of your interest there and copy its
+            address from the URL.
+          </p>
+          <p>
+            For example, for the BAYC collection:
+            https://looksrare.org/collections/
             <span className="text-red">
               0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D
             </span>
@@ -143,14 +174,10 @@ const Collections: NextPage = () => {
           <div className="mt-4 max-w-2xl mx-auto flex flex-col gap-4">
             {collectionsFromSearch.map(function (collection, place) {
               if (
-                // collection.entity &&
-                // collection.entity?.totalSupply !== null &&
-                // collection.entity?.totalSupply !== 0
-                true
+                collection.entity &&
+                collection.entity?.totalSupply !== null &&
+                collection.entity?.totalSupply !== 0
               ) {
-                console.log('data')
-                console.log(data)
-
                 return (
                   <div
                     key={place}

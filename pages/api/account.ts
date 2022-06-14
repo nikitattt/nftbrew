@@ -76,6 +76,9 @@ async function post(address: string, data: any): Promise<User> {
       })
     }
 
+    toUpdate.collections = {}
+    toCreate.collections = {}
+
     toUpdate.collections.upsert = upsert
     toCreate.collections.create = data.collections
   }

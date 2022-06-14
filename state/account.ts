@@ -5,6 +5,7 @@ export interface AccountState {
   collections: Array<Collection>
   setCollections: (collections: Array<Collection>) => void
   addCollection: (collection: Collection) => void
+  removeCollection: (collection: Collection) => void
 }
 
 export const useAccountStore = create<AccountState>((set, get) => ({
@@ -12,5 +13,11 @@ export const useAccountStore = create<AccountState>((set, get) => ({
   setCollections: (collections: Array<Collection>) =>
     set({ collections: collections }),
   addCollection: (collection: Collection) =>
-    set({ collections: [...get().collections!, collection] })
+    set({ collections: [...get().collections!, collection] }),
+  removeCollection: (collection: Collection) =>
+    set({
+      collections: get().collections.filter((obj) => {
+        return obj !== collection
+      })
+    })
 }))
