@@ -31,7 +31,9 @@ const Home: NextPage = () => {
       <NavBar />
       <main className="mt-20 px-8">
         <div className="text-center">
-          <h1 className="font-black text-5xl">Get nft collections overview</h1>
+          <h1 className="font-black text-5xl mx-0 lg:mx-20">
+            Get overviews on your beloved nft collections
+          </h1>
           <p className="mt-4 font-black text-4xl text-grey">
             in the inbox, every morning
           </p>

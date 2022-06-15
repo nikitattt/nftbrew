@@ -1,5 +1,7 @@
 # NFTBrew - daily newsletter with market updates on your beloved NFT projects
 
+![Mail preview](https://i.imgur.com/poG2Tjr.png)
+
 ## Link to the website: https://nftbrewbarista.xyz
 
 ## Project walk-through
