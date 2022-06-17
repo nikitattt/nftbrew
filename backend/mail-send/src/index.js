@@ -36,7 +36,7 @@ async function index() {
   })
 
   for (const data of usersData) {
-    if (!data.email || data.collections === 0) {
+    if (!data.email || data.collections.length === 0) {
       continue
     }
 
